@@ -2,7 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react"
 import { Container, Row, Col, Button } from "react-bootstrap"
 
-function ProductDetailPageForCustomer() {
+function ProductDetailPageForCustomer({setCart}) {
     let { id } = useParams()
     const [productName, setProductName] = useState("")
     const [productPrice, setProductPrice] = useState(0)
@@ -15,19 +15,38 @@ function ProductDetailPageForCustomer() {
                 setProductPrice(data.price)
             })
     }, [id])
-
+    useEffect(()=>{
+        
+    },[])
     function handleAddToCart(productId, productCount) {
         let existing = localStorage.getItem("shopping_cart") //[ {id:1, count:3},{...}]
         let existingArray = JSON.parse(existing)
         console.log("existing array length", existingArray)
         if (existing != null && existingArray.length > 0) {
             let existingArray = JSON.parse(existing)
-            let newArray = existingArray.map(item => item.id == productId ? { id: item.id, count: item.count += productCount } : item)
-            localStorage.setItem("shopping_cart", JSON.stringify(newArray))
+            // let newArray = existingArray.map(item => item.id === productId ? { id: item.id, count: item.count += productCount } : item)
+ 
+            if (existingArray.filter(item=>item.id === productId).length > 0){
+                // product id is in array
+                let newArray = existingArray.map(item => item.id === productId ? { id: item.id, count: item.count += productCount } : item)
+                localStorage.setItem("shopping_cart", JSON.stringify(newArray))
+            } else {
+                existingArray.push({ id: productId, count: productCount })
+                localStorage.setItem("shopping_cart", JSON.stringify(existingArray))
+            }
+            
         } else {
             let newArray = [{ id: productId, count: productCount }]
             localStorage.setItem("shopping_cart", JSON.stringify(newArray))
         }
+        calculateCartCount()
+    }
+    function calculateCartCount(){
+        let existing = localStorage.getItem("shopping_cart")
+        let existingArray = JSON.parse(existing)
+        let total = 0
+        existingArray.map(item => total += item.count)
+        setCart(total)
     }
     return (
 

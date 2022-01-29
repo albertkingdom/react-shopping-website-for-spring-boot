@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.side_nav {
+  background-color: #f7f7f7;
+  padding: 10px 20px;
+  
+}
+.side_nav a {
+  color: black;
+}
+
+.main_content {
+  height: calc(100vh - 50px);
+}
+
+ul {
+  list-style: none;
+}
+a {
+  text-decoration: none;
+  
+}
