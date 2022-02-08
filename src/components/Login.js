@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
-import {
-  Container,
-   Button,
-  Form,
-    ButtonGroup,
-} from "react-bootstrap";
+import { Container, Button, Form, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
-function Login({ userName, setUser }) {
+function Login({ userName, setUser, setRole }) {
   let navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +13,7 @@ function Login({ userName, setUser }) {
   const [loginForm, setLoginForm] = useState(true);
 
   function handleLogIn(e) {
-    let formIsValid = validateForm()
+    let formIsValid = validateForm();
     //if (!formIsValid) { return }
     e.preventDefault();
     fetch("http://localhost:8080/api/login", {
@@ -41,9 +37,19 @@ function Login({ userName, setUser }) {
         }
       })
       .then((data) => {
-        console.log("user data", data);
-        setUser(data.name);
-        localStorage.setItem("shopping-website-user", data.name);
+        console.log("login data", data);
+        setUser(data.username);
+        let accessToken = data["access_token"];
+        let refreshToken = data["refresh_token"];
+        sessionStorage.setItem("shopping-website-user", data.username);
+        sessionStorage.setItem("access_token", accessToken);
+        sessionStorage.setItem("refresh_token", refreshToken);
+
+        let decodedToken = jwt_decode(accessToken);
+        const { roles, exp } = decodedToken;
+        console.log(decodedToken);
+        setRole(roles); // ["ROLE_USER"]
+        sessionStorage.setItem("token_expireAt", exp * 1000);
         navigate("/product_list");
       })
       .catch((error) => console.log(error));
@@ -75,19 +81,20 @@ function Login({ userName, setUser }) {
       .catch((error) => console.log(error));
   }
   function handleLogout() {
-    fetch("http://localhost:8080/api/logout")
-      .then((resp) => resp.text())
-      .then((data) => console.log(data));
+    // fetch("http://localhost:8080/api/logout")
+    //   .then((resp) => resp.text())
+    //   .then((data) => console.log(data));
     setUser(null);
-    localStorage.removeItem("shopping-website-user");
+    setRole([]);
+    sessionStorage.removeItem("shopping-website-user");
+    sessionStorage.removeItem("access_token");
   }
   function validateForm() {
-      if (email.length === 0 || password.length === 0){
-          console.log("email 長度不足")
-          return 
-      }
+    if (email.length === 0 || password.length === 0) {
+      console.log("email 長度不足");
+      return;
+    }
   }
-  
 
   if (userName != null) {
     return (
@@ -154,14 +161,14 @@ function Login({ userName, setUser }) {
         )}
         {loginForm && (
           <div className="d-grid">
-            <Button variant="primary" type="submit" >
+            <Button variant="primary" type="submit">
               登入
             </Button>
           </div>
         )}
         {!loginForm && (
           <div className="d-grid">
-            <Button variant="primary" type="submit" >
+            <Button variant="primary" type="submit">
               註冊
             </Button>
           </div>

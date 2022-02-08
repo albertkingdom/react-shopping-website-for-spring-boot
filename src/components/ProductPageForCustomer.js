@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ProductListItem from "./ProductListItem";
 
 function ProductPageForCustomer() {
-  let navigate = useNavigate();
+  
   const [productList, setProductList] = useState([]);
   useEffect(() => {
     fetch("http://localhost:8080/api/products")

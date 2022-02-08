@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { Container, Table, Button } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MdDeleteOutline } from "react-icons/md";
+import { updateAccessToken } from "../util/refreshTokenUtil";
 
 function ProductPageForSeller() {
   let navigate = useNavigate();
@@ -15,20 +16,24 @@ function ProductPageForSeller() {
       .then((data) => setProductList(data));
   }, []);
   function handleDelete(id) {
-    fetch(`http://localhost:8080/api/products/${id}`, {
-      method: "DELETE",
+    function deleteProduct() {
+      let accessToken = sessionStorage.getItem("access_token");
 
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.text())
-      .then((data) => {
-        console.log(data);
+      fetch(`http://localhost:8080/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then((response) => response.text())
+        .then((data) => {
+          console.log(data);
 
-        //navigate("/product")
-        setProductList(productList.filter((product) => product.id !== id));
-      });
+          setProductList(productList.filter((product) => product.id !== id));
+        });
+    }
+    updateAccessToken(deleteProduct);
   }
   return (
     <Container>

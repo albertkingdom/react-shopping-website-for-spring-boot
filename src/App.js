@@ -13,18 +13,23 @@ import ProductPageForCustomer from "./components/ProductPageForCustomer";
 import OrderListPageForSeller from "./components/OrderListPageForSeller";
 import ProductDetailPageForCustomer from "./components/ProductDetailPageForCustomer";
 import Cart from "./components/Cart";
-import CheckOut from "./components/CheckOut";
 import Login from "./components/Login";
 import SellerHomePage from "./components/SellerHomePage";
 
 import { useState } from "react";
 import RouteNeedLogin from "./components/RouteNeedLogin";
+import RouteNeedAdmin from "./components/RouteNeedAdmin";
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
+  const [userRole, setUserRole] = useState([]);
   const [cartCount, setCartCount] = useState(0);
+  
   function configuretUserInfo(value) {
     setUserInfo(value);
+  }
+  function configureUserRole(role) {
+    setUserRole(role)
   }
   function configureCart(value) {
     setCartCount(value);
@@ -37,9 +42,9 @@ function App() {
         <Route
           path="/seller"
           element={
-            <RouteNeedLogin redirectTo="/login" userName={userInfo}>
+            <RouteNeedAdmin redirectTo="/login" userName={userInfo} userRole={userRole}>
               <SellerHomePage />
-            </RouteNeedLogin>
+            </RouteNeedAdmin>
           }
         >
           <Route
@@ -61,10 +66,10 @@ function App() {
           element={<ProductDetailPageForCustomer setCart={configureCart} />}
         />
         <Route path="/cart" element={<Cart setCart={configureCart} />} />
-        <Route path="/checkout" element={<CheckOut />} />
+        
         <Route
           path="/login"
-          element={<Login userName={userInfo} setUser={configuretUserInfo} />}
+          element={<Login userName={userInfo} setUser={configuretUserInfo} setRole={configureUserRole}/>}
         />
       </Routes>
     </Router>

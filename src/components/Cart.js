@@ -3,12 +3,10 @@ import {
   Container,
   Table,
   Button,
-  Form,
-  Col,
-  Row,
   Accordion,
 } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { updateAccessToken } from "../util/refreshTokenUtil";
 
 function Cart({ setCart }) {
   let navigate = useNavigate();
@@ -20,6 +18,17 @@ function Cart({ setCart }) {
     getLocalStorage();
   }, []);
   useEffect(() => {
+    function calTotalPrice() {
+      let totalPrice = 0;
+      let totalCount = 0;
+      cartList.forEach((item) => {
+        totalPrice += item.totalPrice;
+        totalCount += 1;
+      });
+      //console.log("cart all price", totalPrice)
+      setCartTotalPrice(totalPrice);
+      setCart(totalCount);
+    }
     calTotalPrice();
   }, [cartList]);
   async function getLocalStorage() {
@@ -54,31 +63,26 @@ function Cart({ setCart }) {
 
     localStorage.setItem("shopping_cart", JSON.stringify(updatedCartList));
   }
-  function calTotalPrice() {
-    let totalPrice = 0;
-    let totalCount = 0;
-    cartList.forEach((item) => {
-      totalPrice += item.totalPrice;
-      totalCount += 1;
-    });
-    //console.log("cart all price", totalPrice)
-    setCartTotalPrice(totalPrice);
-    setCart(totalCount);
-  }
+  
   function handleSubmit() {
     let orderBody = {
       items: cartList.map((item) => {
         return { productId: item.id, productCount: item.count };
       }),
-      userId: 1,
-      totalPrice: 2000,
+      
+      totalPrice: cartTotalPrice,
     };
+    
+    
     console.log("submit order body", orderBody);
+    function sumbitOrder() {
+      let accessToken = sessionStorage.getItem("access_token")
     fetch("http://localhost:8080/api/order", {
       method: "POST",
       body: JSON.stringify(orderBody),
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`
       },
       credentials: "include",
     })
@@ -92,6 +96,8 @@ function Cart({ setCart }) {
         }
       })
       .catch((error) => console.log(error));
+    }
+    updateAccessToken(sumbitOrder)
   }
   return (
     <Container>

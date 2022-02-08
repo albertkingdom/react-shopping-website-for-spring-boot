@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { Form, Button, Container } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
+import { updateAccessToken } from "../util/refreshTokenUtil";
 
 function EditOrder() {
   let navigate = useNavigate();
   let { id } = useParams();
-  
+
   const [userId, setUserId] = useState();
 
   const [orderPrice, setOrderPrice] = useState(0);
@@ -13,22 +14,26 @@ function EditOrder() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    fetch(`http://localhost:8080/api/order/${id}`,{
-        method:"DELETE",
-        headers: {
-            'Content-Type': 'application/json'
-        }
 
-    })
-    .then(response => {
-        if(response.status===200){
-            navigate("/seller/order_list_page_seller")
-        } else {
-            throw new Error("delete order failer")
-        }
-    })
-    .catch(error => console.log(error))
-    
+    function deleteOrder() {
+      let accessToken = sessionStorage.getItem("access_token");
+      fetch(`http://localhost:8080/api/order/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/seller/order_list_page_seller");
+          } else {
+            throw new Error("delete order failer");
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+    updateAccessToken(deleteOrder);
   }
   useEffect(() => {
     fetch(`http://localhost:8080/api/order/${id}`)
@@ -60,9 +65,9 @@ function EditOrder() {
           <Form.Label>Items</Form.Label>
           {/* <Form.Control as="textarea"  disabled /> */}
           {orderItems.map((item) => (
-            <p key={item.productId}>商品id: {item.productId}, 商品數量: {item.quantity}</p>
-         
-
+            <p key={item.productId}>
+              商品id: {item.productId}, 商品數量: {item.quantity}
+            </p>
           ))}
         </Form.Group>
         <Button variant="primary" type="submit">

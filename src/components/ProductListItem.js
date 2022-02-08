@@ -7,7 +7,7 @@ export default function ProductListItem({ product }) {
   return (
     <Col sm={3}>
       <Card
-      className={styles.product_card}
+      className={`${styles.product_card} my-2`}
         onClick={() => {
           navigate(`/product_detail/${product.id}`);
         }}

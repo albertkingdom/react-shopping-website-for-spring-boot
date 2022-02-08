@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react"
 import { Container, Row, Col, Button } from "react-bootstrap"
 
@@ -15,9 +15,7 @@ function ProductDetailPageForCustomer({setCart}) {
                 setProductPrice(data.price)
             })
     }, [id])
-    useEffect(()=>{
-        
-    },[])
+    
     function handleAddToCart(productId, productCount) {
         let existing = localStorage.getItem("shopping_cart") //[ {id:1, count:3},{...}]
         let existingArray = JSON.parse(existing)
