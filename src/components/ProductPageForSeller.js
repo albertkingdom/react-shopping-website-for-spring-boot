@@ -9,7 +9,7 @@ function ProductPageForSeller() {
   const [productList, setProductList] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   useEffect(() => {
-    fetch("http://localhost:8080/api/products", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
       credentials: "include",
     })
       .then((response) => response.json())
@@ -19,7 +19,7 @@ function ProductPageForSeller() {
     function deleteProduct() {
       let accessToken = sessionStorage.getItem("access_token");
 
-      fetch(`http://localhost:8080/api/products/${id}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

@@ -17,7 +17,7 @@ function EditOrder() {
 
     function deleteOrder() {
       let accessToken = sessionStorage.getItem("access_token");
-      fetch(`http://localhost:8080/api/order/${id}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -36,7 +36,7 @@ function EditOrder() {
     updateAccessToken(deleteOrder);
   }
   useEffect(() => {
-    fetch(`http://localhost:8080/api/order/${id}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(data)

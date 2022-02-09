@@ -7,7 +7,7 @@ function ProductPageForCustomer() {
   
   const [productList, setProductList] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:8080/api/products")
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`)
       .then((response) => response.json())
       .then((data) => setProductList(data));
   }, []);

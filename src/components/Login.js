@@ -16,7 +16,7 @@ function Login({ userName, setUser, setRole }) {
     let formIsValid = validateForm();
     //if (!formIsValid) { return }
     e.preventDefault();
-    fetch("http://localhost:8080/api/login", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
       method: "POST",
       body: JSON.stringify({ email: email, password: password }),
       headers: {
@@ -56,7 +56,7 @@ function Login({ userName, setUser, setRole }) {
   }
   function handleRegister(e) {
     e.preventDefault();
-    fetch("http://localhost:8080/api/register", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
       method: "POST",
       body: JSON.stringify({ email: email, password: password }),
       headers: {
@@ -81,9 +81,6 @@ function Login({ userName, setUser, setRole }) {
       .catch((error) => console.log(error));
   }
   function handleLogout() {
-    // fetch("http://localhost:8080/api/logout")
-    //   .then((resp) => resp.text())
-    //   .then((data) => console.log(data));
     setUser(null);
     setRole([]);
     sessionStorage.removeItem("shopping-website-user");

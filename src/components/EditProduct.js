@@ -13,7 +13,7 @@ function EditProduct() {
     function submitProduct() {
       let accessToken = sessionStorage.getItem("access_token");
 
-      fetch(`http://localhost:8080/api/products/${id}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/${id}`, {
         method: "PUT",
         body: JSON.stringify({ name: productName, price: productPrice }),
         headers: {
@@ -32,7 +32,7 @@ function EditProduct() {
     updateAccessToken(submitProduct);
   }
   useEffect(() => {
-    fetch(`http://localhost:8080/api/products/${id}`)
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/${id}`)
       .then((response) => response.json())
       .then((data) => {
         // console.log(data)

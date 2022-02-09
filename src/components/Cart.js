@@ -40,7 +40,7 @@ function Cart({ setCart }) {
     }
     for (let i = 0; i < cartArray.length; i++) {
       let productInfoResponse = await fetch(
-        `http://localhost:8080/api/products/${cartArray[i].id}`
+        `${process.env.REACT_APP_BACKEND_URL}/api/products/${cartArray[i].id}`
       );
       let productInfo = await productInfoResponse.json();
       console.log(productInfo);
@@ -77,7 +77,7 @@ function Cart({ setCart }) {
     console.log("submit order body", orderBody);
     function sumbitOrder() {
       let accessToken = sessionStorage.getItem("access_token")
-    fetch("http://localhost:8080/api/order", {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
       method: "POST",
       body: JSON.stringify(orderBody),
       headers: {

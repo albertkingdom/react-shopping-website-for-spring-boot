@@ -13,7 +13,7 @@ function CreateProduct() {
     function createProduct() {
       let accessToken = sessionStorage.getItem("access_token");
 
-      fetch("http://localhost:8080/api/products", {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
         method: "POST",
         body: JSON.stringify({ name: productName, price: productPrice }),
         headers: {

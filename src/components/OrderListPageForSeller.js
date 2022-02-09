@@ -13,7 +13,7 @@ export default function OrderListPageForSeller() {
       console.log("start to fetch order");
       let accessToken = sessionStorage.getItem("access_token");
 
-      fetch("http://localhost:8080/api/order", {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -29,7 +29,7 @@ export default function OrderListPageForSeller() {
     function deleteOrder() {
       let accessToken = sessionStorage.getItem("access_token");
 
-      fetch(`http://localhost:8080/api/order/${id}`, {
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${id}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

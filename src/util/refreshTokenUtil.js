@@ -6,26 +6,8 @@ export async function updateAccessToken(complete) {
   // if expire time is 10s from expiration
   if (new Date() >= parseInt(tokenExpireAt) - 1000 * 10) {
     console.log("will get new access token");
-    // await fetch("http://localhost:8080/api/refreshToken", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${refreshToken}`,
-    //   },
-    // })
-    //   .then((resp) => resp.json())
-    //   .then((data) => {
-    //     let accessToken = data["access_token"];
-    //     sessionStorage.setItem("access_token", accessToken);
-    //     let decodedToken = jwt_decode(accessToken);
-    //     const { exp } = decodedToken;
-
-    //     sessionStorage.setItem("token_expireAt", exp * 1000);
-    //     console.log("successfully get new access token")
-    //     return true
-    //   });
-
-    const resp = await fetch("http://localhost:8080/api/refreshToken", {
+ 
+    const resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/refreshToken`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
