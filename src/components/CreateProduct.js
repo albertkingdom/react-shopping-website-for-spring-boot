@@ -20,7 +20,7 @@ function CreateProduct() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        credentials: "include",
+        // credentials: "include",
       })
         .then((response) => response.json())
         .then((data) => {

@@ -14,7 +14,7 @@ export default function OrderListPageForSeller() {
       let accessToken = sessionStorage.getItem("access_token");
 
       fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
-        credentials: "include",
+        // credentials: "include",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,

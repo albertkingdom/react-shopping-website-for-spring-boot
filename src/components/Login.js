@@ -22,7 +22,7 @@ function Login({ userName, setUser, setRole }) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
+      // credentials: "include",
     })
       .then((resp) => {
         console.log("status code", resp.status);
@@ -62,7 +62,7 @@ function Login({ userName, setUser, setRole }) {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include",
+      // credentials: "include",
     })
       .then((resp) => {
         console.log("status code", resp.status);

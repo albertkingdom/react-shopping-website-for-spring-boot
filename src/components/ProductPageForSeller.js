@@ -10,7 +10,7 @@ function ProductPageForSeller() {
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
-      credentials: "include",
+      // credentials: "include",
     })
       .then((response) => response.json())
       .then((data) => setProductList(data));

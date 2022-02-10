@@ -84,7 +84,7 @@ function Cart({ setCart }) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${accessToken}`
       },
-      credentials: "include",
+      // credentials: "include",
     })
       .then((response) => {
         if (response.status === 200) {
