@@ -36,14 +36,23 @@ function EditOrder() {
     updateAccessToken(deleteOrder);
   }
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        // console.log(data)
-        setUserId(data.userId);
-        setOrderPrice(data.priceSum);
-        setOrderItems(data.orderItems);
-      });
+    function fetchOrderById() {
+      let accessToken = sessionStorage.getItem("access_token");
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log(data)
+          setUserId(data.userId);
+          setOrderPrice(data.priceSum);
+          setOrderItems(data.orderItems);
+        });
+    }
+    updateAccessToken(fetchOrderById);
   }, [id]);
   return (
     <Container>
