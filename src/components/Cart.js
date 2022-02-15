@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Container,
-  Table,
-  Button,
-  Accordion,
-} from "react-bootstrap";
+import { Container, Table, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { updateAccessToken } from "../util/refreshTokenUtil";
 
@@ -63,44 +58,42 @@ function Cart({ setCart }) {
 
     localStorage.setItem("shopping_cart", JSON.stringify(updatedCartList));
   }
-  
+
   function handleSubmit() {
     let orderBody = {
       items: cartList.map((item) => {
         return { productId: item.id, productCount: item.count };
       }),
-      
+
       totalPrice: cartTotalPrice,
     };
-    
-    
-    console.log("submit order body", orderBody);
+
     function sumbitOrder() {
-      let accessToken = sessionStorage.getItem("access_token")
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
-      method: "POST",
-      body: JSON.stringify(orderBody),
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${accessToken}`
-      },
-      // credentials: "include",
-    })
-      .then((response) => {
-        if (response.status === 200) {
-          localStorage.removeItem("shopping_cart");
-          setCart(0)
-          navigate("/product_list");
-        } else {
-          throw new Error("Submit Order Error");
-        }
+      let accessToken = sessionStorage.getItem("access_token");
+      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
+        method: "POST",
+        body: JSON.stringify(orderBody),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        // credentials: "include",
       })
-      .catch((error) => console.log(error));
+        .then((response) => {
+          if (response.status === 200) {
+            localStorage.removeItem("shopping_cart");
+            setCart(0);
+            navigate("/product_list");
+          } else {
+            throw new Error("Submit Order Error");
+          }
+        })
+        .catch((error) => console.log(error));
     }
-    updateAccessToken(sumbitOrder)
+    updateAccessToken(sumbitOrder);
   }
   return (
-    <Container>
+    <Container className="py-3">
       <Accordion defaultActiveKey="0">
         <Accordion.Item eventKey="0">
           <Accordion.Header>購物車清單</Accordion.Header>

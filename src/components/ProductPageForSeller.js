@@ -7,7 +7,7 @@ import { updateAccessToken } from "../util/refreshTokenUtil";
 function ProductPageForSeller() {
   let navigate = useNavigate();
   const [productList, setProductList] = useState([]);
-  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  // const [isDeleteMode, setIsDeleteMode] = useState(false);
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
       // credentials: "include",
@@ -47,19 +47,19 @@ function ProductPageForSeller() {
         >
           Create
         </Button>
-        <Button
+        {/* <Button
           size="sm"
           variant="secondary"
           onClick={() => setIsDeleteMode(!isDeleteMode)}
         >
           Delete Mode
-        </Button>
+        </Button> */}
       </div>
 
       <Table striped bordered hover>
         <thead>
           <tr>
-            {isDeleteMode ? <th>Delete</th> : null}
+            {/* {isDeleteMode ? <th>Delete</th> : null} */}
             <th>id</th>
             <th>name</th>
             <th>price</th>
@@ -69,7 +69,7 @@ function ProductPageForSeller() {
         <tbody>
           {productList.map((product) => (
             <tr key={product.id}>
-              {isDeleteMode ? (
+              {/* {isDeleteMode ? (
                 <td>
                   <Button
                     variant="light"
@@ -78,18 +78,25 @@ function ProductPageForSeller() {
                     <MdDeleteOutline />
                   </Button>
                 </td>
-              ) : null}
+              ) : null} */}
               <td>{product.id}</td>
               <td>{product.name}</td>
               <td>{product.price}</td>
-              <th>
+              <td>
                 <Button
                   variant="outline-secondary"
                   onClick={() => navigate(`/seller/editProduct/${product.id}`)}
+                  className="me-2"
                 >
                   Edit
                 </Button>
-              </th>
+                <Button
+                    variant="outline-danger"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    <MdDeleteOutline />
+                  </Button>
+              </td>
             </tr>
           ))}
         </tbody>

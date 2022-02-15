@@ -48,10 +48,10 @@ function ProductDetailPageForCustomer({setCart}) {
     }
     return (
 
-        <Container>
+        <Container className="py-3">
             <Row>
                 <Col sm={6}>
-                    <img src="#" alt="product image" />
+                    <img src="https://via.placeholder.com/728" alt="product" className="img-fluid"/>
                 </Col>
                 <Col sm={6}>
                     <h3>{productName}</h3>

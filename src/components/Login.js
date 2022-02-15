@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Container, Button, Form, ButtonGroup } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
+import styles from "../style/Login.module.css"
 
 function Login({ userName, setUser, setRole }) {
   let navigate = useNavigate();
@@ -105,8 +106,8 @@ function Login({ userName, setUser, setRole }) {
   }
 
   return (
-    <Container className="">
-      <ButtonGroup className="">
+    <div className={`${styles.container}`}>
+      <ButtonGroup className={`${styles.customButtonGroup}`}>
         <Button
           variant={loginForm ? "primary" : "outline-secondary"}
           onClick={() => setLoginForm(true)}
@@ -120,7 +121,7 @@ function Login({ userName, setUser, setRole }) {
           註冊
         </Button>
       </ButtonGroup>
-      <Form onSubmit={loginForm ? handleLogIn : handleRegister}>
+      <Form onSubmit={loginForm ? handleLogIn : handleRegister} className="w-50 mx-auto color-white">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control
@@ -158,20 +159,20 @@ function Login({ userName, setUser, setRole }) {
         )}
         {loginForm && (
           <div className="d-grid">
-            <Button variant="primary" type="submit">
+            <Button variant="secondary" type="submit">
               登入
             </Button>
           </div>
         )}
         {!loginForm && (
           <div className="d-grid">
-            <Button variant="primary" type="submit">
+            <Button variant="secondary" type="submit">
               註冊
             </Button>
           </div>
         )}
       </Form>
-    </Container>
+    </div>
   );
 }
 

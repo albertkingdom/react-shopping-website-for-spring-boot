@@ -7,7 +7,7 @@ import { updateAccessToken } from "../util/refreshTokenUtil";
 export default function OrderListPageForSeller() {
   let navigate = useNavigate();
   const [orderList, setOrderList] = useState([]);
-  const [isDeleteMode, setIsDeleteMode] = useState(false);
+  // const [isDeleteMode, setIsDeleteMode] = useState(false);
   useEffect(() => {
     function fetchOrder() {
       console.log("start to fetch order");
@@ -48,19 +48,19 @@ export default function OrderListPageForSeller() {
   }
   return (
     <Container>
-      <Button
+      {/* <Button
         size="sm"
         variant="secondary"
         className="my-2"
         onClick={() => setIsDeleteMode(!isDeleteMode)}
       >
         Delete Mode
-      </Button>
+      </Button> */}
 
       <Table striped bordered hover>
         <thead>
           <tr>
-            {isDeleteMode ? <td>delete</td> : null}
+            {/* {isDeleteMode ? <td>delete</td> : null} */}
             <th>id</th>
             <th>userId</th>
             <th>order price</th>
@@ -70,7 +70,7 @@ export default function OrderListPageForSeller() {
         <tbody>
           {orderList.map((order) => (
             <tr key={order.id}>
-              {isDeleteMode ? (
+              {/* {isDeleteMode ? (
                 <td>
                   <Button
                     variant="light"
@@ -79,18 +79,25 @@ export default function OrderListPageForSeller() {
                     <MdDeleteOutline />
                   </Button>
                 </td>
-              ) : null}
+              ) : null} */}
               <td>{order.id}</td>
               <td>{order.userId}</td>
               <td>{order.priceSum}</td>
-              <th>
+              <td>
                 <Button
                   variant="outline-secondary"
                   onClick={() => navigate(`/seller/editOrder/${order.id}`)}
+                  className="me-2"
                 >
                   Edit
                 </Button>
-              </th>
+                <Button
+                    variant="outline-danger"
+                    onClick={() => handleDelete(order.id)}
+                  >
+                    <MdDeleteOutline />
+                  </Button>
+              </td>
             </tr>
           ))}
         </tbody>

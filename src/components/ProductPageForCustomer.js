@@ -1,17 +1,28 @@
 import { useEffect, useState } from "react";
-import { Container, Table, Button, Card, Row } from "react-bootstrap";
+import { Container, Row, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import ProductListItem from "./ProductListItem";
 
 function ProductPageForCustomer() {
-  
   const [productList, setProductList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`)
       .then((response) => response.json())
-      .then((data) => setProductList(data));
+      .then((data) => {
+        setProductList(data);
+        setIsLoading(false);
+      });
   }, []);
-
+  
+  if (isLoading) {
+    return (
+      <div className="p-5">
+        <Spinner animation="border" className="text-center d-block" />
+      </div>
+    );
+  }
   return (
     <div>
       <Container>

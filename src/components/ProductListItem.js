@@ -15,7 +15,7 @@ export default function ProductListItem({ product }) {
         <Card.Img variant="top" src="https://via.placeholder.com/728" />
         <Card.Body>
           <Card.Title>{product.name}</Card.Title>
-          <Card.Text>{product.price}</Card.Text>
+          <Card.Text>${product.price}</Card.Text>
           {/* <Button variant="primary">Go somewhere</Button> */}
         </Card.Body>
       </Card>
