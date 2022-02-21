@@ -2,7 +2,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react"
 import { Container, Row, Col, Button } from "react-bootstrap"
 
-function ProductDetailPageForCustomer({setCart}) {
+function ProductDetailPageForCustomer({setCartCount}) {
     let { id } = useParams()
     const [productName, setProductName] = useState("")
     const [productPrice, setProductPrice] = useState(0)
@@ -44,7 +44,7 @@ function ProductDetailPageForCustomer({setCart}) {
         let existingArray = JSON.parse(existing)
         let total = 0
         existingArray.map(item => total += item.count)
-        setCart(total)
+        setCartCount(total)
     }
     return (
 

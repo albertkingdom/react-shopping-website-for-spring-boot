@@ -1,8 +1,4 @@
-import logo from "./logo.svg";
-import styles from "./style/App.module.css";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
-import { IoCartOutline, IoPersonCircleOutline } from "react-icons/io5";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Header from "./components/Header";
 import ProductPageForSeller from "./components/ProductPageForSeller";
@@ -14,8 +10,8 @@ import OrderListPageForSeller from "./components/OrderListPageForSeller";
 import ProductDetailPageForCustomer from "./components/ProductDetailPageForCustomer";
 import Cart from "./components/Cart";
 import Login from "./components/Login";
-import SellerHomePage from "./components/SellerHomePage";
-
+import Seller from "./components/Seller";
+import SellerHome from "./components/SellerHome";
 import { useState } from "react";
 import RouteNeedLogin from "./components/RouteNeedLogin";
 import RouteNeedAdmin from "./components/RouteNeedAdmin";
@@ -31,7 +27,7 @@ function App() {
   function configureUserRole(role) {
     setUserRole(role)
   }
-  function configureCart(value) {
+  function setCartCountCallback(value) {
     setCartCount(value);
   }
   return (
@@ -43,10 +39,11 @@ function App() {
           path="/seller"
           element={
             <RouteNeedAdmin redirectTo="/login" userName={userInfo} userRole={userRole}>
-              <SellerHomePage />
+              <Seller />
             </RouteNeedAdmin>
           }
         >
+          <Route index element={<SellerHome />} />
           <Route
             path="product_list_page_seller"
             element={<ProductPageForSeller />}
@@ -63,9 +60,9 @@ function App() {
         <Route path="/product_list" element={<ProductPageForCustomer />} />
         <Route
           path="/product_detail/:id"
-          element={<ProductDetailPageForCustomer setCart={configureCart} />}
+          element={<ProductDetailPageForCustomer setCartCount={setCartCountCallback} />}
         />
-        <Route path="/cart" element={<Cart setCart={configureCart} />} />
+        <Route path="/cart" element={<Cart setCartCount={setCartCountCallback} />} />
         
         <Route
           path="/login"

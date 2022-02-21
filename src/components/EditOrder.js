@@ -8,7 +8,7 @@ function EditOrder() {
   let { id } = useParams();
 
   const [userId, setUserId] = useState();
-
+  const [userEmail, setUserEmail] = useState();
   const [orderPrice, setOrderPrice] = useState(0);
   const [orderItems, setOrderItems] = useState([]);
 
@@ -48,8 +48,10 @@ function EditOrder() {
         .then((data) => {
           // console.log(data)
           setUserId(data.userId);
+          setUserEmail(data.userEmail)
           setOrderPrice(data.priceSum);
-          setOrderItems(data.orderItems);
+          setOrderItems(data.orderItemDetailList);
+
         });
     }
     updateAccessToken(fetchOrderById);
@@ -62,8 +64,8 @@ function EditOrder() {
           <Form.Control type="text" readOnly value={id} />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>User Id</Form.Label>
-          <Form.Control type="text" value={userId} readOnly />
+          <Form.Label>User Email</Form.Label>
+          <Form.Control type="text" value={userEmail} readOnly />
         </Form.Group>
 
         <Form.Group className="mb-3">
@@ -71,11 +73,12 @@ function EditOrder() {
           <Form.Control type="text" value={orderPrice} readOnly />
         </Form.Group>
         <Form.Group className="mb-3">
-          <Form.Label>Items</Form.Label>
-          {/* <Form.Control as="textarea"  disabled /> */}
+          <Form.Label>訂單商品</Form.Label>
+
           {orderItems.map((item) => (
-            <p key={item.productId}>
-              商品id: {item.productId}, 商品數量: {item.quantity}
+            <p className="form-control" key={item.productName} readOnly>
+              名稱: {item.productName}, 商品數量: {item.quantity}, 單價:
+              {item.productPrice}
             </p>
           ))}
         </Form.Group>

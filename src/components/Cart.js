@@ -3,7 +3,7 @@ import { Container, Table, Button, Accordion } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { updateAccessToken } from "../util/refreshTokenUtil";
 
-function Cart({ setCart }) {
+function Cart({ setCartCount }) {
   let navigate = useNavigate();
   const [cartList, setCartList] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
@@ -18,14 +18,14 @@ function Cart({ setCart }) {
       let totalCount = 0;
       cartList.forEach((item) => {
         totalPrice += item.totalPrice;
-        totalCount += 1;
+        totalCount += item.count;
       });
       //console.log("cart all price", totalPrice)
       setCartTotalPrice(totalPrice);
-      setCart(totalCount);
+      setCartCount(totalCount);
     }
     calTotalPrice();
-  }, [cartList]);
+  }, [cartList, setCartCount]);
   async function getLocalStorage() {
     let existing = localStorage.getItem("shopping_cart");
     let cartArray = JSON.parse(existing); //[ {id:1, count:3},{...}]
@@ -33,12 +33,13 @@ function Cart({ setCart }) {
     if (cartArray == null) {
       return;
     }
+    // fetch updated product price, name from server
     for (let i = 0; i < cartArray.length; i++) {
       let productInfoResponse = await fetch(
         `${process.env.REACT_APP_BACKEND_URL}/api/products/${cartArray[i].id}`
       );
       let productInfo = await productInfoResponse.json();
-      console.log(productInfo);
+      // console.log(productInfo);
 
       cartArrayWithPriceAndCount.push({
         id: cartArray[i].id,
@@ -48,12 +49,12 @@ function Cart({ setCart }) {
         totalPrice: productInfo.price * cartArray[i].count,
       });
     }
-    console.log("cartArrayWithPriceAndCount", cartArrayWithPriceAndCount);
+    //console.log("cartArrayWithPriceAndCount", cartArrayWithPriceAndCount);
     setCartList(cartArrayWithPriceAndCount);
   }
 
   function handleDeleteItem(productId) {
-    let updatedCartList = cartList.filter((product) => product.id != productId);
+    let updatedCartList = cartList.filter((product) => product.id !== productId);
     setCartList(updatedCartList);
 
     localStorage.setItem("shopping_cart", JSON.stringify(updatedCartList));
@@ -64,8 +65,6 @@ function Cart({ setCart }) {
       items: cartList.map((item) => {
         return { productId: item.id, productCount: item.count };
       }),
-
-      totalPrice: cartTotalPrice,
     };
 
     function sumbitOrder() {
@@ -82,7 +81,8 @@ function Cart({ setCart }) {
         .then((response) => {
           if (response.status === 200) {
             localStorage.removeItem("shopping_cart");
-            setCart(0);
+            setCartCount(0);
+            setCartList([])
             navigate("/product_list");
           } else {
             throw new Error("Submit Order Error");

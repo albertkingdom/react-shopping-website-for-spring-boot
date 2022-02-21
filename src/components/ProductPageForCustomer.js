@@ -18,8 +18,8 @@ function ProductPageForCustomer() {
   
   if (isLoading) {
     return (
-      <div className="p-5">
-        <Spinner animation="border" className="text-center d-block" />
+      <div className="p-5 d-flex justify-content-center">
+        <Spinner animation="border" />
       </div>
     );
   }
