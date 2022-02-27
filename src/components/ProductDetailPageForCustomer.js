@@ -6,13 +6,14 @@ function ProductDetailPageForCustomer({setCartCount}) {
     let { id } = useParams()
     const [productName, setProductName] = useState("")
     const [productPrice, setProductPrice] = useState(0)
+    const [product, setProduct] = useState({})
     useEffect(() => {
         fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/${id}`)
             .then(response => response.json())
             .then(data => {
-                // console.log(data)
-                setProductName(data.name)
-                setProductPrice(data.price)
+                // setProductName(data.name)
+                // setProductPrice(data.price)
+                setProduct(data)
             })
     }, [id])
     
@@ -46,16 +47,17 @@ function ProductDetailPageForCustomer({setCartCount}) {
         existingArray.map(item => total += item.count)
         setCartCount(total)
     }
+    const imgSrc = product.imgUrl || "https://via.placeholder.com/728";
     return (
 
         <Container className="py-3">
             <Row>
                 <Col sm={6}>
-                    <img src="https://via.placeholder.com/728" alt="product" className="img-fluid"/>
+                    <img src={imgSrc} alt="product" className="img-fluid img-thumbnail"/>
                 </Col>
                 <Col sm={6}>
-                    <h3>{productName}</h3>
-                    <h4>${productPrice}</h4>
+                    <h3>{product.name}</h3>
+                    <h4>${product.price}</h4>
                     <Button variant="outline-danger" onClick={() => handleAddToCart(id, 1)}>加入購物車</Button>
                 </Col>
             </Row>

@@ -6,18 +6,23 @@ import { updateAccessToken } from "../util/refreshTokenUtil";
 function EditProduct() {
   let navigate = useNavigate();
   let { id } = useParams();
-  const [productName, setProductName] = useState("");
-  const [productPrice, setProductPrice] = useState(0);
+  // const [productName, setProductName] = useState("");
+  // const [productPrice, setProductPrice] = useState(0);
+  const [product, setProduct] = useState({});
   function handleSubmit(e) {
     e.preventDefault();
     function submitProduct() {
       let accessToken = sessionStorage.getItem("access_token");
-
+      const formData = new FormData();
+      formData.append("productName", e.target.productName.value);
+      formData.append("productPrice", e.target.productPrice.value);
+      formData.append("productImage", e.target.image.files[0]);
       fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products/${id}`, {
         method: "PUT",
-        body: JSON.stringify({ name: productName, price: productPrice }),
+        // body: JSON.stringify({ name: productName, price: productPrice }),
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
       })
@@ -36,13 +41,14 @@ function EditProduct() {
       .then((response) => response.json())
       .then((data) => {
         // console.log(data)
-        setProductName(data.name);
-        setProductPrice(data.price);
+        // setProductName(data.name);
+        // setProductPrice(data.price);
+        setProduct(data);
       });
   }, [id]);
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} encType="multipart/form-data">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Product Id</Form.Label>
           <Form.Control type="text" disabled value={id} />
@@ -52,8 +58,9 @@ function EditProduct() {
           <Form.Control
             type="text"
             placeholder="Enter name"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
+            name="productName"
+            value={product.name}
+            onChange={(e) => setProduct({ ...product, name: e.target.value })}
           />
         </Form.Group>
 
@@ -62,11 +69,22 @@ function EditProduct() {
           <Form.Control
             type="text"
             placeholder="Price"
-            value={productPrice}
-            onChange={(e) => setProductPrice(e.target.value)}
+            name="productPrice"
+            value={product.price}
+            onChange={(e) => setProduct({ ...product, price: e.target.value })}
           />
         </Form.Group>
+        <Form.Group controlId="formFile" className="mb-3">
+          <Form.Label>Product Image</Form.Label>
+          <img
+            src={product.imgUrl || "https://via.placeholder.com/728"}
+            alt="product"
+            className="d-block m-1"
+            style={{ width: "200px" }}
+          />
 
+          <Form.Control name="image" type="file" />
+        </Form.Group>
         <Button variant="primary" type="submit">
           Submit
         </Button>

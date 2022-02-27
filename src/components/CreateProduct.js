@@ -9,15 +9,27 @@ function CreateProduct() {
   const [productPrice, setProductPrice] = useState(0);
   function handleSubmit(e) {
     e.preventDefault();
+    console.log("handle submit", e.target);
+    console.log(
+      "handle submit",
+      e.target.productName.value,
+      e.target.productPrice.value,
+      e.target.image.files[0]
+    );
 
-    function createProduct() {
+    function createProduct(data) {
       let accessToken = sessionStorage.getItem("access_token");
+      const formData = new FormData();
+      formData.append("productName", e.target.productName.value);
+      formData.append("productPrice", e.target.productPrice.value);
+      formData.append("productImage", e.target.image.files[0]);
 
       fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
         method: "POST",
-        body: JSON.stringify({ name: productName, price: productPrice }),
+        // body: JSON.stringify({ name: productName, price: productPrice }),
+        body: formData,
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
         // credentials: "include",
@@ -35,11 +47,12 @@ function CreateProduct() {
 
   return (
     <Container>
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} encType="multipart/form-data">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Name</Form.Label>
           <Form.Control
             type="text"
+            name="productName"
             placeholder="Enter name"
             onChange={(e) => setProductName(e.target.value)}
           />
@@ -49,11 +62,15 @@ function CreateProduct() {
           <Form.Label>Price</Form.Label>
           <Form.Control
             type="text"
+            name="productPrice"
             placeholder="Price"
             onChange={(e) => setProductPrice(e.target.value)}
           />
         </Form.Group>
-
+        <Form.Group controlId="formFile" className="mb-3">
+          <Form.Label>Product Image</Form.Label>
+          <Form.Control name="image" type="file" />
+        </Form.Group>
         <Button variant="primary" type="submit">
           Submit
         </Button>
