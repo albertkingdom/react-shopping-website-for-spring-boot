@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Button, Form, ButtonGroup } from "react-bootstrap";
+import { Container, Button, Form, ButtonGroup, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import styles from "../style/Login.module.css"
@@ -10,76 +10,75 @@ function Login({ userName, setUser, setRole }) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
-  const [loginError, showLoginError] = useState(false);
+  const [loginError, setLoginError] = useState(null); //login error msg
+  const [registerError, setRegisterError] = useState(null); // register error msg
   const [loginForm, setLoginForm] = useState(true);
+  useEffect(() => {
+    //clear error when switch form
+    setLoginError(null)
+    setRegisterError(null)
+    setEmail("")
+    setPassword("")
+    setName("")
+  }, [loginForm])
 
-  function handleLogIn(e) {
-    let formIsValid = validateForm();
-    //if (!formIsValid) { return }
+  async function handleLogIn(e) {
+   
     e.preventDefault();
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
+
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/login`, {
       method: "POST",
       body: JSON.stringify({ email: email, password: password }),
       headers: {
         "Content-Type": "application/json",
       },
-      // credentials: "include",
     })
-      .then((resp) => {
-        console.log("status code", resp.status);
-        //console.log("status body", resp.body)
-        if (resp.status === 200) {
-          // localStorage.setItem("user", resp.body)
+    if (response.status === 200) {
+      const data = await response.json()
+      console.log("login data", data);
+      setUser(data.username);
+      let accessToken = data["access_token"];
+      let refreshToken = data["refresh_token"];
+      sessionStorage.setItem("shopping-website-user", data.username);
+      sessionStorage.setItem("access_token", accessToken);
+      sessionStorage.setItem("refresh_token", refreshToken);
 
-          return resp.json();
-        } else {
-          showLoginError(true);
-          throw new Error("failed to login");
-        }
-      })
-      .then((data) => {
-        console.log("login data", data);
-        setUser(data.username);
-        let accessToken = data["access_token"];
-        let refreshToken = data["refresh_token"];
-        sessionStorage.setItem("shopping-website-user", data.username);
-        sessionStorage.setItem("access_token", accessToken);
-        sessionStorage.setItem("refresh_token", refreshToken);
+      let decodedToken = jwt_decode(accessToken);
+      const { roles, exp } = decodedToken;
+      console.log(decodedToken);
+      setRole(roles); // ["ROLE_USER"]
+      sessionStorage.setItem("token_expireAt", exp * 1000);
+      navigate("/product_list");
+    } else {
+      const errMsg = await response.text()
+      console.error(errMsg)
+      setLoginError(errMsg)
+    }
 
-        let decodedToken = jwt_decode(accessToken);
-        const { roles, exp } = decodedToken;
-        console.log(decodedToken);
-        setRole(roles); // ["ROLE_USER"]
-        sessionStorage.setItem("token_expireAt", exp * 1000);
-        navigate("/product_list");
-      })
-      .catch((error) => console.log(error));
   }
-  function handleRegister(e) {
+  async function handleRegister(e) {
     e.preventDefault();
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
+
+    const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/register`, {
       method: "POST",
-      body: JSON.stringify({ email: email, password: password }),
+      body: JSON.stringify({ email: email, password: password, name: name }),
       headers: {
         "Content-Type": "application/json",
       },
-      // credentials: "include",
     })
-      .then((resp) => {
-        console.log("status code", resp.status);
-        //console.log("status body", resp.body)
-        if (resp.status === 200) {
-          // localStorage.setItem("user", resp.body)
+    const data = await response.json();
+    if (response.status === 200) {
 
-          return resp.json();
-        } else {
-          throw new Error("failed to register");
-        }
-      })
-      .then((data) => {
-        console.log("register result", data);
-      })
-      .catch((error) => console.log(error));
+      console.log("register success", data)
+      setEmail("")
+      setPassword("")
+      setName("")
+      setLoginForm(true)
+    } else {
+      console.error("register failed", data)
+      setRegisterError(data)
+    }
+
   }
   function handleLogout() {
     setUser(null);
@@ -87,12 +86,7 @@ function Login({ userName, setUser, setRole }) {
     sessionStorage.removeItem("shopping-website-user");
     sessionStorage.removeItem("access_token");
   }
-  function validateForm() {
-    if (email.length === 0 || password.length === 0) {
-      console.log("email 長度不足");
-      return;
-    }
-  }
+  
 
   if (userName != null) {
     return (
@@ -121,13 +115,24 @@ function Login({ userName, setUser, setRole }) {
           註冊
         </Button>
       </ButtonGroup>
+      {loginForm && loginError &&
+        <Alert variant="danger" style={{ width: "fit-content", margin: "10px auto" }}>
+          {loginError}!
+        </Alert>
+      }
+      {!loginForm && registerError &&
+        <Alert variant="danger" style={{ width: "fit-content", margin: "10px auto" }}>
+          {registerError.errors.map(error=>`${error.message || error.msg}`).join(" ")}
+        </Alert>
+      }
       <Form onSubmit={loginForm ? handleLogIn : handleRegister} className="w-50 mx-auto color-white">
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email</Form.Label>
           <Form.Control
-            type="text"
+            type="email"
             placeholder="Enter email"
             required
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </Form.Group>
@@ -136,15 +141,12 @@ function Login({ userName, setUser, setRole }) {
           <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
-            placeholder="Password"
+            placeholder={loginForm ? "Password" : "Password at least 6 characters."}
             required
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {loginError && (
-            <Form.Text style={{ color: "red" }}>
-              帳號或密碼錯誤，請重新檢查。
-            </Form.Text>
-          )}
+
         </Form.Group>
         {!loginForm && (
           <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -153,6 +155,7 @@ function Login({ userName, setUser, setRole }) {
               type="text"
               placeholder="Enter name"
               required
+              value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
