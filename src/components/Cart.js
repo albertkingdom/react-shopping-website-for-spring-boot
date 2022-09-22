@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Table, Button, Accordion } from "react-bootstrap";
+import { Container, Table, Button, Accordion, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { updateAccessToken } from "../util/refreshTokenUtil";
 
@@ -8,6 +8,7 @@ function Cart({ setCartCount }) {
   const [cartList, setCartList] = useState([]);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [cartTotalPrice, setCartTotalPrice] = useState(0);
+  const [show, setShow] = useState(false);
 
   useEffect(() => {
     getLocalStorage();
@@ -59,8 +60,13 @@ function Cart({ setCartCount }) {
 
     localStorage.setItem("shopping_cart", JSON.stringify(updatedCartList));
   }
-
+  function checkIfLogin() {
+    let accessToken = sessionStorage.getItem("access_token");
+    accessToken == null ? setShow(true) : setShow(false);
+    return accessToken != null
+  }
   function handleSubmit() {
+    if (!checkIfLogin()) return;
     let orderBody = {
       items: cartList.map((item) => {
         return { productId: item.id, productCount: item.count };
@@ -92,8 +98,16 @@ function Cart({ setCartCount }) {
     }
     updateAccessToken(sumbitOrder);
   }
+
   return (
     <Container className="py-3">
+      {show &&
+        <Alert variant="danger" onClose={() => setShow(false)} dismissible>
+          <p>
+            請先登入!
+          </p>
+        </Alert>
+      }
       <Accordion defaultActiveKey="0">
         <Accordion.Item eventKey="0">
           <Accordion.Header>購物車清單</Accordion.Header>
@@ -170,6 +184,7 @@ function Cart({ setCartCount }) {
           下訂單
         </Button>
       </div>
+
     </Container>
   );
 }
