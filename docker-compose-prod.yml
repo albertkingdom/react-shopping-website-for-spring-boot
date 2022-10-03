@@ -4,10 +4,11 @@ services:
   react-app:
     stdin_open: true
     tty: true
-    build: .
+    image: albertkingdomdevelop/frontend
+    # build: 
+    #   context: .
+    #   dockerfile: Dockerfile.prod
     ports:
-      - 3000:3000
-    volumes:
-      - ./src:/usr/src/app/src
+      - 80:80
     env_file:
       - ./.env
