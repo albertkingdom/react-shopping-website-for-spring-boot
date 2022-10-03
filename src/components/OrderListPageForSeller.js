@@ -46,6 +46,16 @@ export default function OrderListPageForSeller() {
     }
     updateAccessToken(deleteOrder);
   }
+  function formatDate(dateStr) {
+    let dateObj = new Date(dateStr)
+    let year = dateObj.getFullYear()
+    let month = dateObj.getMonth() + 1
+    let date = dateObj.getDate()
+    let hour = dateObj.getHours()
+    let min = dateObj.getMinutes()
+    let sec = dateObj.getSeconds()
+    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
+  }
   return (
     <Container>
       {/* <Button
@@ -64,6 +74,7 @@ export default function OrderListPageForSeller() {
             <th>id</th>
             <th>userId</th>
             <th>order price</th>
+            <th>訂單成立時間</th>
             <th>Edit</th>
           </tr>
         </thead>
@@ -83,6 +94,7 @@ export default function OrderListPageForSeller() {
               <td>{order.id}</td>
               <td>{order.userId}</td>
               <td>{order.priceSum}</td>
+              <td>{formatDate(order.createdAt)}</td>
               <td>
                 <Button
                   variant="outline-secondary"
@@ -92,11 +104,11 @@ export default function OrderListPageForSeller() {
                   Edit
                 </Button>
                 <Button
-                    variant="outline-danger"
-                    onClick={() => handleDelete(order.id)}
-                  >
-                    <MdDeleteOutline />
-                  </Button>
+                  variant="outline-danger"
+                  onClick={() => handleDelete(order.id)}
+                >
+                  <MdDeleteOutline />
+                </Button>
               </td>
             </tr>
           ))}

@@ -15,7 +15,7 @@ function ProductPageForCustomer() {
         setIsLoading(false);
       });
   }, []);
-  
+
   if (isLoading) {
     return (
       <div className="p-5 d-flex justify-content-center">
