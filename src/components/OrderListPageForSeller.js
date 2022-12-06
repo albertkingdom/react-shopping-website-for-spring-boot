@@ -51,10 +51,10 @@ export default function OrderListPageForSeller() {
     let year = dateObj.getFullYear()
     let month = dateObj.getMonth() + 1
     let date = dateObj.getDate()
-    let hour = dateObj.getHours()
-    let min = dateObj.getMinutes()
-    let sec = dateObj.getSeconds()
-    return `${year}-${month}-${date} ${hour}:${min}:${sec}`
+    let hourStr = dateObj.getHours() < 10 ? `0${dateObj.getHours()}` : `${dateObj.getHours()}`
+    let minStr = dateObj.getMinutes() < 10 ? `0${dateObj.getMinutes()}` : `${dateObj.getMinutes()}`
+    let secStr = dateObj.getSeconds() < 10 ? `0${dateObj.getSeconds()}` : `${dateObj.getSeconds()}`
+    return `${year}-${month}-${date} ${hourStr}:${minStr}:${secStr}`
   }
   return (
     <Container>
