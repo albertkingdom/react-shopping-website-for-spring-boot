@@ -3,18 +3,31 @@ import { Container, Table, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { MdDeleteOutline } from "react-icons/md";
 import { updateAccessToken } from "../util/refreshTokenUtil";
+import Pagination from "./subComponents/Pagination";
 
 function ProductPageForSeller() {
   let navigate = useNavigate();
   const [productList, setProductList] = useState([]);
-  // const [isDeleteMode, setIsDeleteMode] = useState(false);
+  const [totalPage, setTotalPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // page start from 0
+
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products`, {
+    fetchProduct(0)
+    updateAccessToken(fetchProduct);
+
+  }, []);
+  function fetchProduct(page = 0) {
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/products?page=${page}`, {
       // credentials: "include",
     })
       .then((response) => response.json())
-      .then((data) => setProductList(data));
-  }, []);
+      .then((data) => {
+        setProductList(data.content)
+        setTotalPage(data.totalPages)
+        setCurrentPage(page)
+      }
+      );
+  }
   function handleDelete(id) {
     function deleteProduct() {
       let accessToken = sessionStorage.getItem("access_token");
@@ -55,6 +68,10 @@ function ProductPageForSeller() {
           Delete Mode
         </Button> */}
       </div>
+      <Pagination
+        totalPage={totalPage}
+        currentPage={currentPage}
+        fetch={fetchProduct} />
 
       <Table striped bordered hover>
         <thead>
@@ -91,11 +108,11 @@ function ProductPageForSeller() {
                   Edit
                 </Button>
                 <Button
-                    variant="outline-danger"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <MdDeleteOutline />
-                  </Button>
+                  variant="outline-danger"
+                  onClick={() => handleDelete(product.id)}
+                >
+                  <MdDeleteOutline />
+                </Button>
               </td>
             </tr>
           ))}

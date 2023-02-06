@@ -3,28 +3,37 @@ import { Container, Table, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { MdDeleteOutline } from "react-icons/md";
 import { updateAccessToken } from "../util/refreshTokenUtil";
+import Pagination from "./subComponents/Pagination";
 
 export default function OrderListPageForSeller() {
   let navigate = useNavigate();
   const [orderList, setOrderList] = useState([]);
-  // const [isDeleteMode, setIsDeleteMode] = useState(false);
-  useEffect(() => {
-    function fetchOrder() {
-      console.log("start to fetch order");
-      let accessToken = sessionStorage.getItem("access_token");
+  const [totalPage, setTotalPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // page start from 0
 
-      fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order`, {
-        // credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => setOrderList(data));
-    }
+  useEffect(() => {
+    fetchOrder(0)
     updateAccessToken(fetchOrder);
   }, []);
+  function fetchOrder(page = 0) {
+    console.log(`start to fetch order page ${page}`);
+    let accessToken = sessionStorage.getItem("access_token");
+
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/order?page=${page}`, {
+      // credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setOrderList(data.content)
+        setTotalPage(data.totalPages)
+        setCurrentPage(page)
+      }
+      );
+  }
   function handleDelete(id) {
     function deleteOrder() {
       let accessToken = sessionStorage.getItem("access_token");
@@ -46,6 +55,24 @@ export default function OrderListPageForSeller() {
     }
     updateAccessToken(deleteOrder);
   }
+  // function onClickNextPage(e) {
+  //   e.preventDefault();
+  //   if (currentPage + 1 === totalPage) {
+  //     return
+  //   }
+  //   fetchOrder(currentPage + 1)
+  // }
+  // function onClickPreviousPage(e) {
+  //   e.preventDefault();
+  //   if (currentPage === 0) {
+  //     return
+  //   }
+  //   fetchOrder(currentPage - 1)
+  // }
+  // function onClickPage(e, pageVisable) {
+  //   e.preventDefault();
+  //   fetchOrder(pageVisable - 1)
+  // }
   function formatDate(dateStr) {
     let dateObj = new Date(dateStr)
     let year = dateObj.getFullYear()
@@ -58,15 +85,11 @@ export default function OrderListPageForSeller() {
   }
   return (
     <Container>
-      {/* <Button
-        size="sm"
-        variant="secondary"
-        className="my-2"
-        onClick={() => setIsDeleteMode(!isDeleteMode)}
-      >
-        Delete Mode
-      </Button> */}
 
+      <Pagination
+        totalPage={totalPage}
+        currentPage={currentPage}
+        fetch={fetchOrder} />
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -81,16 +104,7 @@ export default function OrderListPageForSeller() {
         <tbody>
           {orderList.map((order) => (
             <tr key={order.id}>
-              {/* {isDeleteMode ? (
-                <td>
-                  <Button
-                    variant="light"
-                    onClick={() => handleDelete(order.id)}
-                  >
-                    <MdDeleteOutline />
-                  </Button>
-                </td>
-              ) : null} */}
+
               <td>{order.id}</td>
               <td>{order.userId}</td>
               <td>{order.priceSum}</td>
