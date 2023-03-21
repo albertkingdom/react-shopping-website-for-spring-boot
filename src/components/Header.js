@@ -5,40 +5,40 @@ import styles from "../style/Header.module.css"
 
 export default function Header({ userInfo, cartCount }) {
   return (
-    <nav className={`py-1 ${styles.topHeader}`}>
+    <Navbar bg="dark" expand="lg" variant="dark">
       <Container className="d-flex align-items-center">
         <Navbar.Brand>Ecommerce</Navbar.Brand>
-        <div className="d-flex justify-content-between  flex-grow-1">
-          <div className="">
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="me-auto">
             <Link
               to="/seller"
-              className="text-decoration-none text-light mx-2"
+              className="text-decoration-none text-light mx-2 nav-link"
             >
               後台
             </Link>
-
             <Link
               to="/product_list"
-              className="text-decoration-none text-light mx-2"
+              className="text-decoration-none text-light mx-2 nav-link"
             >
               商品頁
             </Link>
-          </div>
-          <div className="d-flex align-items-center">
-            <Link to="/cart" className="mx-2">
-              <IoCartOutline size={24} className="text-light"/>
+          </Nav>
+          <Nav>
+            <Link to="/cart" className="mx-2 nav-link">
+              <IoCartOutline size={24} className="text-light" />
+              <Badge bg="secondary" className="d-inline-block p-2">
+                {cartCount}
+              </Badge>
             </Link>
-            <Badge pill bg="secondary" className="me-1">
-              {cartCount}
-            </Badge>
-            {userInfo && <p className="my-0">Hello, {userInfo}</p>}
-            <Link to="/login" className="mx-2">
-              <IoPersonCircleOutline size={24} className="text-light"/>
+
+            <Link to="/login" className="mx-2 nav-link">
+              {userInfo && <span className="my-0">{userInfo}</span>}
+              <IoPersonCircleOutline size={24} className="text-light" />
             </Link>
-          </div>
-         
-        </div>
+          </Nav>
+        </Navbar.Collapse>
       </Container>
-    </nav>
+    </Navbar>
   );
 }
